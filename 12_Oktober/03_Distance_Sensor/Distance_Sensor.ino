@@ -1,0 +1,54 @@
+/*
+  Arduino LSM6DS3 - Simple Accelerometer
+
+  This example reads the acceleration values from the LSM6DS3
+  sensor and continuously prints them to the Serial Monitor
+  or Serial Plotter.
+
+  The circuit:
+  - Arduino Uno WiFi Rev 2 or Arduino Nano 33 IoT
+
+  created 10 Jul 2019
+  by Riccardo Rizzo
+
+  This example code is in the public domain.
+*/
+
+#include <Arduino_LSM6DS3.h>
+int ledPin = 6;
+
+void setup() {
+
+  Serial.begin(9600);
+  while (!Serial);
+
+  if (!IMU.begin()) {
+    Serial.println("Failed to initialize IMU!");
+
+    while (1);
+  }
+
+  Serial.print("Accelerometer sample rate = ");
+  Serial.print(IMU.accelerationSampleRate());
+  Serial.println(" Hz");
+  Serial.println();
+  Serial.println("Acceleration in g's");
+  Serial.println("X\tY\tZ");
+}
+
+void loop() {
+  float x, y, z;
+
+  if (IMU.accelerationAvailable()) {
+    IMU.readAcceleration(x, y, z);
+
+    Serial.print(x);
+    Serial.print('\t');
+    Serial.print(y);
+    Serial.print('\t');
+    Serial.println(z);
+  }
+  int intensity = map(z, 1.2, -1, 0, 255);
+ analogWrite(ledPin, intensity);
+  
+}
