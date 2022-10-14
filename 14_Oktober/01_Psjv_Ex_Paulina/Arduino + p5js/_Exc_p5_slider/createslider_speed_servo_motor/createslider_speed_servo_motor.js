@@ -1,16 +1,23 @@
 let msg;
-let serialOptions = { baudRate: 9600 };
+let serialOptions = { baudRate:
+9600 };
 let serial;
 let bMsg = "OFF";
 let mic;
-let buttonConnect,buttonDisconnect;
+let buttonConnect, buttonDisconnect;
 let timer = 0;
 let done = false;
+let servoValue;
 
 function setup() {
+  
+  servoValue = createSlider(0, 180, 1);
+  servoValue.position(100, 100);
+  slider.style('width', '300px');
+  
   createCanvas(500, 500);
   background(255);
-  
+
   // Setup Web Serial using serial.js
   serial = new Serial();
   serial.on(SerialEvents.CONNECTION_OPENED, onSerialConnectionOpened);
@@ -20,31 +27,28 @@ function setup() {
 
   //display messages and errors
   msg = createP('');
-  
-  buttonConnect = createButton('Connect Port');
-  buttonConnect.position(20,20);
-  buttonConnect.mousePressed(connectPort);
-  
-  buttonDisconnect = createButton('Disonnect Port');
-  buttonDisconnect.position(150,20);
-  buttonDisconnect.mousePressed(disconnectPort);
-  
 
+  buttonConnect = createButton('Connect Port');
+  buttonConnect.position(20, 20);
+  buttonConnect.mousePressed(connectPort);
+
+  buttonDisconnect = createButton('Disonnect Port');
+  buttonDisconnect.position(150, 20);
+  buttonDisconnect.mousePressed(disconnectPort);
 }
 
 function mouseClicked() {
-     // Create an Audio Input
+  // Create an Audio Input
   mic = new p5.AudioIn();
   // start the Audio Input
-   mic.start();
-   done = true;
-   getAudioContext().resume();
+  mic.start();
+  done = true;
+  getAudioContext().resume();
 }
 
 async function connectPort() {
   if (!serial.isOpen()) {
     await serial.connectAndOpen(null, serialOptions);
-    
   } else {
     serial.autoConnectAndOpenPreviouslyApprovedPort(serialOptions);
   }
@@ -52,30 +56,40 @@ async function connectPort() {
 
 async function disconnectPort() {
   if (serial.isOpen()) {
-      serial.close();
+    serial.close();
   }
 }
 
 function draw() {
-  if(done) {
-    background(265);
-  let vol = mic.getLevel();
-  let brightness = map(vol, 0, 1, 0, 255);
-  let diameter = map(vol, 0, 1, 0, 400);
-  fill(0,255,0);
-  circle(width/2, height/2, diameter);
-  
-  console.log("Volume: " + vol);
-  //send data every 200ms
-   if (millis() >= 200 + timer){
-    serialWriteTextData(brightness);
-    timer = millis();
-  }
-  }
+  background(265);
+  //if (done) {
+    
+  //  let vol = mic.getLevel();
+  //  let brightness = map(vol, 0, 0.7, 0, 255);
+  //  let diameter = map(vol, 0, 0.7, 0, 400);
+  //  let ServoRotate = map(vol, 0, 0.7, 0, 180);
+  //  fill(0, 255, 0);
+  //  circle(width/2, height/2, diameter);
+
+  //  console.log("Volume: " + vol);
+  //  //send data every 200ms
+  //  if (millis() >= 200 + timer) {
+  //    serialWriteTextData(brightness);
+  //    serialWriteTextData(ServoRotate);
+
+  //    timer = millis();
+  //  }
+    
+      let servo = servoValue.value();
+      console.log("Servo is at: " + servo);
+      serialWriteTextDate(servo);
+     // slider.value.position(20, 20);
+      background(val);
+
 }
 
 // Callback function by serial.js when there is an error on web serial
- function onSerialErrorOccurred(eventSender, error) {
+function onSerialErrorOccurred(eventSender, error) {
   console.log("onSerialErrorOccurred", error);
   msg.html(error);
 }
@@ -95,12 +109,12 @@ function onSerialConnectionClosed(eventSender) {
 }
 
 //Callback function serial.js when new web serial data is received
- 
+
 function onSerialDataReceived(eventSender, newData) {
   console.log("onSerialDataReceived", newData);
   msg.html("onSerialDataReceived: " + newData);
 }
- 
+
 function serialWriteTextData(b) {
   let brighArr = [];
   brighArr.push(b);
@@ -110,5 +124,6 @@ function serialWriteTextData(b) {
   if (serial.isOpen() ) {
     console.log("Writing brightness to serial: ", brighArr);
     serial.writeLine(brighArr);
+
   }
 }
