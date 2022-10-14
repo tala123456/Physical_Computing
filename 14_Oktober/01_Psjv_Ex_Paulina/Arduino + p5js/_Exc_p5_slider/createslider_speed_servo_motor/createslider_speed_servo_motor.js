@@ -13,7 +13,7 @@ function setup() {
   
   servoValue = createSlider(0, 180, 1);
   servoValue.position(100, 100);
-  slider.style('width', '300px');
+  servoValue.style('width', '300px');
   
   createCanvas(500, 500);
   background(255);

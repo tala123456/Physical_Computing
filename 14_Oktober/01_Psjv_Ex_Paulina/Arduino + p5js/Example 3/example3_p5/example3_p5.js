@@ -48,8 +48,10 @@ async function disconnectPort() {
 
 function draw() {
   background(200);
+  circle(width/2 + potVal, height/2, 100);
   fill(col);
-  text(dn, width/2, height/2);
+ // text(dn, width/2, height/2);
+  
   
 }
 
@@ -72,10 +74,10 @@ function onSerialDataReceived(eventSender, newData) {
   
   if(potVal==1) {
     col = color(255,250,205);
-    dn = "DAY";
+    circle.position(0, height/2, 30);
   } else {
     col = color(0,0,200);
-    dn = "NIGHT";
+    circle.position(380, height/2, 30);
   }
   
 }

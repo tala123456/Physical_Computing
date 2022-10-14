@@ -6,8 +6,10 @@ let serial; // the Serial object
 let serialOptions = { baudRate:
 9600 };
 let buttonConnect, buttonDisconnect;
+let color1, color2;
 
 function setup() {
+  noStroke();
   createCanvas(400, 400);
   background(0);
   // Setup Web Serial using serial.js
@@ -27,6 +29,9 @@ function setup() {
   buttonDisconnect = createButton('Disonnect Port');
   buttonDisconnect.position(150, 20);
   buttonDisconnect.mousePressed(disconnectPort);
+  
+  color1 = color(255, 0, 20);
+  color2 = color(255, 255, 50);
 }
 
 async function connectPort() {
@@ -52,6 +57,12 @@ function draw() {
     background(0);
     fill(255);
   }
+  
+  let potCol = lerpColor (color1, color2, shapeFraction); //shapefraction is what you get from arduino to p5js
+  let potCol2 = lerpColor (color2, color1, shapeFraction);
+  fill(potCol);
+  
+ background(potCol2);
   // Set the diameter based on mouseX position
   const maxDiameter = min(width, height);
   let circleDiameter = maxDiameter * shapeFraction;
