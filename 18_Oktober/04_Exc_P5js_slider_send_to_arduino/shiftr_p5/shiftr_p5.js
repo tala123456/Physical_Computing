@@ -1,4 +1,6 @@
 
+let slider;
+
 // MQTT client details:
 let broker = {
   hostname: 'tanja.cloud.shiftr.io',
@@ -41,6 +43,10 @@ function setup() {
   buttonBlink.position(20,20);
   buttonBlink.mouseClicked(sendBlink);
   
+  slider = createSlider(0, 255, 100);
+  slider.position(10, 10);
+  slider.style('width', '80px');
+  
   // Create an MQTT client:
   client = new Paho.MQTT.Client(broker.hostname, broker.port, creds.clientID);
   
@@ -72,7 +78,8 @@ function draw() {
   fill(0);
   // circle moves with the message:
   circle(circleX, circleY, circlediameter);
-
+let val = slider.value();
+  background(val);
   // if you want to send a message every x seconds defined as sendInterval
   /*
     if (millis() - lastTimeSent > sendInterval) {
